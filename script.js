@@ -322,7 +322,9 @@ function revealWallWhenReady(images) {
   waitForImages(images).then(() => {
     recalculateMobileLayout();
     requestAnimationFrame(() => {
-      wall.classList.add("is-ready");
+      requestAnimationFrame(() => {
+        wall.classList.add("is-ready");
+      });
     });
   });
 }

@@ -67,7 +67,9 @@ body::before {
   width: max-content;
   animation-timing-function: linear;
   animation-iteration-count: infinite;
+  animation-name: none;
   animation-play-state: paused;
+  transform: translateX(0);
   transition: opacity 0.6s ease;
 }
 
@@ -118,11 +120,11 @@ body.memory-open #wall.is-ready .row {
   animation-play-state: paused;
 }
 
-.to-left {
+#wall.is-ready .to-left {
   animation-name: moveLeft;
 }
 
-.to-right {
+#wall.is-ready .to-right {
   animation-name: moveRight;
 }
 
@@ -320,11 +322,14 @@ body.memory-open #wall.is-ready .row {
   }
 
   .row img {
-    width: auto;
-    height: auto;
-    max-width: 112px;
-    max-height: 118px;
+    width: 112px;
+    height: 118px;
+    object-fit: contain;
     padding: 0;
+  }
+
+  #wall.is-ready .to-right {
+    animation-name: moveLeft;
   }
 
   .modal-content {
