@@ -246,12 +246,18 @@ function getWallPhotoCount() {
   return Math.min(maxWallPhotos, Math.max(minWallPhotos, total, rowCount));
 }
 
+function isMobileViewport() {
+  return window.matchMedia("(max-width: 768px)").matches;
+}
+
 function createWall() {
   wall.classList.remove("is-ready");
   wall.textContent = "";
 
   const wallPhotoCount = Math.min(photos.length, getWallPhotoCount());
-  const eagerWallPhotoCount = Math.min(wallPhotoCount, Math.max(24, rowCount * 6));
+  const eagerWallPhotoCount = isMobileViewport()
+    ? wallPhotoCount
+    : Math.min(wallPhotoCount, Math.max(24, rowCount * 6));
   const wallPhotos = shuffle(photos).slice(0, wallPhotoCount);
   const rows = Array.from({ length: rowCount }, () => []);
   const eagerImages = [];
