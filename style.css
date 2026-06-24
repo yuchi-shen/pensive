@@ -2,8 +2,15 @@
   box-sizing: border-box;
 }
 
+:root {
+  --vh: 1vh;
+}
+
+html,
 body {
   margin: 0;
+  width: 100%;
+  min-height: calc(var(--vh) * 100);
   background: #f1ede6;
   overflow: hidden;
   font-family: "Noto Sans TC", "PingFang TC", "Microsoft JhengHei", sans-serif;
@@ -37,10 +44,14 @@ body::before {
   position: relative;
   width: 100vw;
   height: 100vh;
-  padding: 3vh 0 12vh;
+  height: 100svh;
+  height: 100dvh;
+  height: calc(var(--vh) * 100);
+  padding: calc(var(--vh) * 3) 0 calc(var(--vh) * 12);
   display: flex;
   flex-direction: column;
   justify-content: space-around;
+  overflow: visible;
   z-index: 1;
 }
 
@@ -185,6 +196,9 @@ body.memory-open .row {
 .modal-content {
   position: relative;
   height: 100vh;
+  height: 100svh;
+  height: 100dvh;
+  height: calc(var(--vh) * 100);
   display: flex;
   align-items: center;
   justify-content: center;
@@ -196,6 +210,9 @@ body.memory-open .row {
 .modal-content img {
   max-width: 52vw;
   max-height: 78vh;
+  max-height: 78svh;
+  max-height: 78dvh;
+  max-height: calc(var(--vh) * 78);
   object-fit: contain;
   box-shadow:
     0 8px 22px rgba(48, 38, 28, 0.14),
@@ -287,6 +304,9 @@ body.memory-open .row {
   .modal-content img {
     max-width: 82vw;
     max-height: 62vh;
+    max-height: 62svh;
+    max-height: 62dvh;
+    max-height: calc(var(--vh) * 62);
   }
 
   .modal-text {

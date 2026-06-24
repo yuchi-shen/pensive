@@ -1,27 +1,27 @@
 const photos = [
-  { file: "001.jpg", date: "2026/3/31", caption: "跟栗子合照" },
-  { file: "002.jpg", date: "2026/3/31", caption: "跟蘇西合照" },
+  { file: "001.jpg", date: "2026/3/31", caption: "跟栗子5151" },
+  { file: "002.jpg", date: "2026/3/31", caption: "蘇西想跑" },
   { file: "003.jpg", date: "2026/3/31", caption: "去找小豬拍照" },
-  { file: "004.jpg", date: "2026/3/31", caption: "發現拍立得裡面還有底片" },
+  { file: "004.jpg", date: "2026/3/31", caption: "過期了" },
   { file: "005.jpg", date: "2026/3/31", caption: "剛洗好濕濕的" },
-  { file: "006.jpg", date: "2026/3/31", caption: "拍看看底片可不可以用" },
+  { file: "006.jpg", date: "2026/3/31", caption: "笑一個(•ᴗ•)" },
   { file: "007.jpg", date: "2026/3/12", caption: "沖繩飯店的浴缸" },
   { file: "008.jpg", date: "2026/3/13", caption: "下雨的萬座毛" },
   { file: "009.jpg", date: "2026/3/13", caption: "沖繩海邊" },
   { file: "010.jpg", date: "？？？", caption: "看起來很冷？" },
-  { file: "011.jpg", date: "？？？", caption: "睡覺被偷拍" },
-  { file: "012.jpg", date: "2026/2/26", caption: "拍栗子小豬" },
-  { file: "013.jpg", date: "2026/2/26", caption: "拍蘇西小豬" },
-  { file: "014.jpg", date: "2023/1/1", caption: "純琳元朋婚禮的我們" },
+  { file: "011.jpg", date: "2024", caption: "疊疊樂" },
+  { file: "012.jpg", date: "2026/2/26", caption: "栗子小豬" },
+  { file: "013.jpg", date: "2026/2/26", caption: "蘇西小豬" },
+  { file: "014.jpg", date: "2023/1/1", caption: "純琳元朋婚禮 的我們" },
   { file: "015.jpg", date: "2023", caption: "跟熊熊拍照" },
   { file: "016.jpg", date: "2023", caption: "大吃一口" },
-  { file: "017.jpg", date: "？？？", caption: "軟綿綿" },
+  { file: "017.jpg", date: "2021", caption: "軟綿綿" },
   { file: "018.jpg", date: "？？？", caption: "一隻耳機" },
   { file: "019.jpg", date: "2019/11/3", caption: "去zooooooo" },
-  { file: "020.jpg", date: "2019/2/11", caption: "去北車咖" },
+  { file: "020.jpg", date: "2019/2/11", caption: "北車咖" },
   { file: "021.jpg", date: "???", caption: "demi巨人" },
-  { file: "022.jpg", date: "2023/2/14", caption: "給demi的情人節花" },
-  { file: "023.jpg", date: "2023/4/15", caption: "高雄森之市" },
+  { file: "022.jpg", date: "2023/2/14", caption: "情人節花" },
+  { file: "023.jpg", date: "2023/4/15", caption: "風沙很大的一天" },
   { file: "024.jpg", date: "2025", caption: "橫山書法公園閒人" },
   { file: "025.jpg", date: "???", caption: "熊熊第一次洗澡" },
   { file: "026.jpg", date: "2019/12/1", caption: "社子漫拍" },
@@ -204,6 +204,13 @@ const photos = [
   { file: "203.jpg", date: "2021/10/2", caption: "23歲小孩" },
 ];
 
+function setViewportHeight() {
+  const vh = window.innerHeight * 0.01;
+  document.documentElement.style.setProperty("--vh", `${vh}px`);
+}
+
+setViewportHeight();
+
 const wall = document.getElementById("wall");
 const modal = document.getElementById("modal");
 const modalImg = document.getElementById("modal-img");
@@ -213,17 +220,30 @@ const modalBg = document.querySelector(".modal-bg");
 const modalContent = document.querySelector(".modal-content");
 let closeTimer;
 const modalCloseDuration = 700;
+const initialWallPhotoCount = 52;
+const eagerWallPhotoCount = 16;
+const photosByFile = new Map(photos.map((photo) => [photo.file, photo]));
+
+function recalculateMobileLayout() {
+  setViewportHeight();
+  void wall.offsetHeight;
+  requestAnimationFrame(() => {
+    setViewportHeight();
+    void wall.offsetHeight;
+    scheduleModalTextAlign();
+  });
+}
 
 function shuffle(array) {
   return [...array].sort(() => Math.random() - 0.5);
 }
 
 function createWall() {
-  const shuffled = shuffle(photos);
+  const wallPhotos = shuffle(photos).slice(0, initialWallPhotoCount);
   const rows = [[], [], [], []];
 
-  shuffled.forEach((photo, index) => {
-    rows[index % 4].push(photo);
+  wallPhotos.forEach((photo, index) => {
+    rows[index % 4].push({ photo, index });
   });
 
   rows.forEach((rowPhotos, rowIndex) => {
@@ -234,11 +254,16 @@ function createWall() {
     const rowSet = document.createElement("div");
     rowSet.className = "row-set";
 
-    rowPhotos.forEach((photo) => {
+    rowPhotos.forEach(({ photo, index }) => {
       const img = document.createElement("img");
       img.src = `photos/${photo.file}`;
       img.alt = photo.caption;
       img.dataset.file = photo.file;
+      img.decoding = "async";
+
+      if (index >= eagerWallPhotoCount) {
+        img.loading = "lazy";
+      }
 
       const variation = getPhotoVariation();
       const rotate = randomBetween(-variation.rotate, variation.rotate);
@@ -333,7 +358,20 @@ function scheduleModalTextAlign() {
 
 modalImg.addEventListener("load", scheduleModalTextAlign);
 modalBg.addEventListener("click", closeModal);
-window.addEventListener("resize", scheduleModalTextAlign);
+window.addEventListener("resize", () => {
+  recalculateMobileLayout();
+});
+window.addEventListener("orientationchange", () => {
+  recalculateMobileLayout();
+  window.setTimeout(() => {
+    recalculateMobileLayout();
+  }, 250);
+});
+window.addEventListener("load", recalculateMobileLayout, { once: true });
+
+if (document.readyState === "loading") {
+  document.addEventListener("DOMContentLoaded", recalculateMobileLayout, { once: true });
+}
 
 wall.addEventListener("click", (event) => {
   const img = event.target.closest(".row img");
@@ -342,7 +380,7 @@ wall.addEventListener("click", (event) => {
     return;
   }
 
-  const photo = photos.find((item) => item.file === img.dataset.file);
+  const photo = photosByFile.get(img.dataset.file);
 
   if (photo) {
     openModal(photo);
@@ -354,3 +392,4 @@ modalContent.addEventListener("click", (event) => {
 });
 
 createWall();
+recalculateMobileLayout();
