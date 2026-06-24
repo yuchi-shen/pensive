@@ -352,10 +352,6 @@ body.memory-open #wall.is-ready .row {
     padding: 0;
   }
 
-  #wall.is-ready .to-right {
-    animation-name: moveLeft;
-  }
-
   .modal-content {
     flex-direction: column;
     gap: 24px;
