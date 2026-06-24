@@ -344,8 +344,10 @@ body.memory-open #wall.is-ready .row {
   }
 
   .row img {
-    width: 112px;
-    height: 118px;
+    width: auto;
+    height: auto;
+    max-width: 112px;
+    max-height: 118px;
     object-fit: contain;
     padding: 0;
   }
