@@ -65,6 +65,11 @@ body::before {
   display: flex;
   align-items: center;
   width: max-content;
+  background: transparent;
+  box-shadow: none;
+  border: none;
+  outline: none;
+  padding: 0;
   animation-timing-function: linear;
   animation-iteration-count: infinite;
   animation-name: none;
@@ -82,7 +87,24 @@ body::before {
   align-items: center;
   gap: 30px;
   flex: 0 0 auto;
+  background: transparent;
+  box-shadow: none;
+  border: none;
+  outline: none;
+  padding: 0;
   padding-right: 30px;
+}
+
+.photo-item,
+.photo-wrapper,
+.photo-card,
+.polaroid,
+.polaroid-card {
+  background: transparent;
+  box-shadow: none;
+  padding: 0;
+  border: none;
+  outline: none;
 }
 
 .row img {
@@ -326,10 +348,6 @@ body.memory-open #wall.is-ready .row {
     height: 118px;
     object-fit: contain;
     padding: 0;
-  }
-
-  #wall.is-ready .to-right {
-    animation-name: moveLeft;
   }
 
   .modal-content {
