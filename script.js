@@ -220,8 +220,10 @@ const modalBg = document.querySelector(".modal-bg");
 const modalContent = document.querySelector(".modal-content");
 let closeTimer;
 const modalCloseDuration = 700;
-const initialWallPhotoCount = 52;
-const eagerWallPhotoCount = 16;
+const rowCount = 4;
+const minWallPhotos = 80;
+const maxWallPhotos = 120;
+const estimatedPhotoSlotWidth = 200;
 const photosByFile = new Map(photos.map((photo) => [photo.file, photo]));
 
 function recalculateMobileLayout() {
@@ -238,12 +240,24 @@ function shuffle(array) {
   return [...array].sort(() => Math.random() - 0.5);
 }
 
+function getWallPhotoCount() {
+  const photosPerRow = Math.ceil((window.innerWidth * 3) / estimatedPhotoSlotWidth);
+  const total = photosPerRow * rowCount;
+  return Math.min(maxWallPhotos, Math.max(minWallPhotos, total, rowCount));
+}
+
 function createWall() {
-  const wallPhotos = shuffle(photos).slice(0, initialWallPhotoCount);
-  const rows = [[], [], [], []];
+  wall.classList.remove("is-ready");
+  wall.textContent = "";
+
+  const wallPhotoCount = Math.min(photos.length, getWallPhotoCount());
+  const eagerWallPhotoCount = Math.min(wallPhotoCount, Math.max(24, rowCount * 6));
+  const wallPhotos = shuffle(photos).slice(0, wallPhotoCount);
+  const rows = Array.from({ length: rowCount }, () => []);
+  const eagerImages = [];
 
   wallPhotos.forEach((photo, index) => {
-    rows[index % 4].push({ photo, index });
+    rows[index % rowCount].push({ photo, index });
   });
 
   rows.forEach((rowPhotos, rowIndex) => {
@@ -263,6 +277,8 @@ function createWall() {
 
       if (index >= eagerWallPhotoCount) {
         img.loading = "lazy";
+      } else {
+        eagerImages.push(img);
       }
 
       const variation = getPhotoVariation();
@@ -279,6 +295,35 @@ function createWall() {
     row.appendChild(rowSet);
     row.appendChild(rowSet.cloneNode(true));
     wall.appendChild(row);
+  });
+
+  return eagerImages;
+}
+
+function waitForImages(images) {
+  const imagePromises = images.map((img) => {
+    if (img.complete) {
+      return Promise.resolve();
+    }
+
+    return new Promise((resolve) => {
+      img.addEventListener("load", resolve, { once: true });
+      img.addEventListener("error", resolve, { once: true });
+    });
+  });
+
+  return Promise.race([
+    Promise.all(imagePromises),
+    new Promise((resolve) => window.setTimeout(resolve, 2500)),
+  ]);
+}
+
+function revealWallWhenReady(images) {
+  waitForImages(images).then(() => {
+    recalculateMobileLayout();
+    requestAnimationFrame(() => {
+      wall.classList.add("is-ready");
+    });
   });
 }
 
@@ -391,5 +436,6 @@ modalContent.addEventListener("click", (event) => {
   event.stopPropagation();
 });
 
-createWall();
+const eagerImages = createWall();
 recalculateMobileLayout();
+revealWallWhenReady(eagerImages);

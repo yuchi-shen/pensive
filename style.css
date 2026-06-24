@@ -51,8 +51,14 @@ body::before {
   display: flex;
   flex-direction: column;
   justify-content: space-around;
+  opacity: 0;
   overflow: visible;
   z-index: 1;
+  transition: opacity 0.8s ease;
+}
+
+#wall.is-ready {
+  opacity: 1;
 }
 
 .row {
@@ -61,7 +67,12 @@ body::before {
   width: max-content;
   animation-timing-function: linear;
   animation-iteration-count: infinite;
+  animation-play-state: paused;
   transition: opacity 0.6s ease;
+}
+
+#wall.is-ready .row {
+  animation-play-state: running;
 }
 
 .row-set {
@@ -73,13 +84,15 @@ body::before {
 }
 
 .row img {
+  display: block;
   width: auto;
   height: auto;
-  max-width: 180px;
-  max-height: 150px;
-  box-shadow:
-    0 3px 8px rgba(56, 45, 32, 0.08),
-    0 14px 34px rgba(56, 45, 32, 0.16);
+  max-width: 170px;
+  max-height: 145px;
+  object-fit: contain;
+  background: transparent;
+  padding: 0;
+  box-shadow: 0 18px 40px rgba(0, 0, 0, 0.12);
   cursor: pointer;
   opacity: 0.94;
   transform:
@@ -99,6 +112,10 @@ body::before {
 body.memory-open .row {
   animation-play-state: paused;
   opacity: 0.48;
+}
+
+body.memory-open #wall.is-ready .row {
+  animation-play-state: paused;
 }
 
 .to-left {
@@ -291,9 +308,23 @@ body.memory-open .row {
 }
 
 @media (max-width: 768px) {
+  #wall {
+    justify-content: center;
+    gap: 22px;
+    padding: 28px 0 72px;
+  }
+
+  .row-set {
+    gap: 22px;
+    padding-right: 22px;
+  }
+
   .row img {
-    max-width: 136px;
-    max-height: 112px;
+    width: auto;
+    height: auto;
+    max-width: 112px;
+    max-height: 118px;
+    padding: 0;
   }
 
   .modal-content {
